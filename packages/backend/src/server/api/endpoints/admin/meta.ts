@@ -527,20 +527,6 @@ export const meta = {
 					optional: false, nullable: false,
 				},
 			},
-			nirilaBlockMentionsFromUnfamiliarRemoteUsers: {
-				type: 'boolean',
-				optional: false, nullable: false,
-			},
-			nirilaAllowedUnfamiliarRemoteUserIds: {
-				type: 'array',
-				optional: false,
-				nullable: false,
-				items: {
-					type: 'string',
-					optional: false,
-					nullable: false,
-				},
-			},
 			deliverSuspendedSoftware: {
 				type: 'array',
 				optional: false, nullable: false,
@@ -557,6 +543,20 @@ export const meta = {
 							optional: false, nullable: false,
 						},
 					},
+				},
+			},
+			nirilaBlockMentionsFromUnfamiliarRemoteUsers: {
+				type: 'boolean',
+				optional: false, nullable: false,
+			},
+			nirilaAllowedUnfamiliarRemoteUserIds: {
+				type: 'array',
+				optional: false,
+				nullable: false,
+				items: {
+					type: 'string',
+					optional: false,
+					nullable: false,
 				},
 			},
 		},
