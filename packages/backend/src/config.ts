@@ -119,7 +119,6 @@ type Source = {
 
 	nirila?: {
 		abuseDiscordHook?: string;
-		disableAbuseRepository?: boolean;
 		maxWebImageSize?: number;
 		withRepliesInHomeTL?: boolean;
 		withRepliesInUserList?: boolean;
@@ -225,7 +224,6 @@ export type Config = {
 
 	nirila: {
 		abuseDiscordHook?: string;
-		disableAbuseRepository?: boolean;
 		maxWebImageSize?: number;
 		withRepliesInHomeTL?: boolean,
 		withRepliesInUserList: boolean,
