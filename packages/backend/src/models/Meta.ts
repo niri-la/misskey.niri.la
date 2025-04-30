@@ -367,7 +367,7 @@ export class MiMeta {
 
 	@Column('varchar', {
 		length: 1024,
-		default: 'https://github.com/misskey-dev/misskey',
+		default: 'https://github.com/anatawa12/misskey/tree/vmimi-relay-timeline-releases?tab=readme-ov-file#vmimi-relay-timeline',
 		nullable: true,
 	})
 	public repositoryUrl: string | null;
@@ -574,6 +574,11 @@ export class MiMeta {
 	})
 	public preservedUsernames: string[];
 
+	@Column('integer', {
+		default: 300,
+	})
+	public vmimiRelayTimelineCacheMax: number;
+
 	@Column('boolean', {
 		default: true,
 	})
@@ -664,4 +669,26 @@ export class MiMeta {
 		nullable: true,
 	})
 	public googleAnalyticsMeasurementId: string | null;
+
+	@Column('jsonb', {
+		default: [],
+	})
+	public deliverSuspendedSoftware: SoftwareSuspension[];
+
+	@Column('boolean', {
+		default: false,
+	})
+	public nirilaBlockMentionsFromUnfamiliarRemoteUsers: boolean;
+
+	@Column('varchar', {
+		length: 32,
+		array: true,
+		default: '{}',
+	})
+	public nirilaAllowedUnfamiliarRemoteUserIds: string[];
 }
+
+export type SoftwareSuspension = {
+	software: string,
+	versionRange: string,
+};

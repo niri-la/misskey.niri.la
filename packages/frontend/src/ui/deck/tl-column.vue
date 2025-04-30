@@ -20,12 +20,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 	<MkTimeline
 		v-else-if="column.tl"
 		ref="timeline"
-		:key="column.tl + withRenotes + withReplies + onlyFiles"
+		:key="column.tl + withRenotes + withReplies + onlyFiles + withLocalOnly"
 		:src="column.tl"
 		:withRenotes="withRenotes"
 		:withReplies="withReplies"
 		:withSensitive="withSensitive"
 		:onlyFiles="onlyFiles"
+		:withLocalOnly="withLocalOnly"
 		@note="onNote"
 	/>
 </XColumn>
@@ -41,7 +42,7 @@ import { removeColumn, updateColumn } from '@/deck.js';
 import MkTimeline from '@/components/MkTimeline.vue';
 import * as os from '@/os.js';
 import { i18n } from '@/i18n.js';
-import { hasWithReplies, isAvailableBasicTimeline, basicTimelineIconClass } from '@/timelines.js';
+import { hasWithReplies, isAvailableBasicTimeline, basicTimelineIconClass, hasWithLocalOnly } from '@/timelines.js';
 import { soundSettingsButton } from '@/ui/deck/tl-note-notification.js';
 import * as sound from '@/utility/sound.js';
 
@@ -57,6 +58,7 @@ const withRenotes = ref(props.column.withRenotes ?? true);
 const withReplies = ref(props.column.withReplies ?? false);
 const withSensitive = ref(props.column.withSensitive ?? true);
 const onlyFiles = ref(props.column.onlyFiles ?? false);
+const withLocalOnly = ref(props.column.withLocalOnly ?? true);
 
 watch(withRenotes, v => {
 	updateColumn(props.column.id, {
@@ -82,6 +84,12 @@ watch(onlyFiles, v => {
 	});
 });
 
+watch(withLocalOnly, v => {
+	updateColumn(props.column.id, {
+		withLocalOnly: v,
+	});
+});
+
 watch(soundSetting, v => {
 	updateColumn(props.column.id, { soundSetting: v });
 });
@@ -103,6 +111,10 @@ async function setType() {
 			value: 'social' as const, text: i18n.ts._timelines.social,
 		}, {
 			value: 'global' as const, text: i18n.ts._timelines.global,
+		}, {
+			value: 'vmimi-relay' as const, text: i18n.ts._timelines['vmimi-relay'],
+		}, {
+			value: 'vmimi-relay-social' as const, text: i18n.ts._timelines['vmimi-relay-social'],
 		}],
 	});
 	if (canceled) {
@@ -157,6 +169,14 @@ const menu = computed<MenuItem[]>(() => {
 		text: i18n.ts.withSensitive,
 		ref: withSensitive,
 	});
+
+	if (hasWithLocalOnly(props.column.tl)) {
+		menuItems.push({
+			type: 'switch',
+			text: i18n.ts.showLocalOnlyInTimeline,
+			ref: withLocalOnly,
+		});
+	}
 
 	return menuItems;
 });

@@ -495,6 +495,24 @@ export type paths = {
      */
     post: operations['admin___meta'];
   };
+  '/admin/nirila-delete-user-log-access': {
+    /**
+     * admin/nirila-delete-user-log-access
+     * @description No description provided.
+     *
+     * **Credential required**: *Yes* / **Permission**: *read:admin:nirila-delete-user-log-access*
+     */
+    post: operations['admin___nirila-delete-user-log-access'];
+  };
+  '/admin/note-public-to-home': {
+    /**
+     * admin/note-public-to-home
+     * @description No description provided.
+     *
+     * **Credential required**: *Yes* / **Permission**: *write:notes*
+     */
+    post: operations['admin___note-public-to-home'];
+  };
   '/admin/promo/create': {
     /**
      * admin/promo/create
@@ -3310,6 +3328,24 @@ export type paths = {
      */
     post: operations['notes___user-list-timeline'];
   };
+  '/notes/vmimi-relay-hybrid-timeline': {
+    /**
+     * notes/vmimi-relay-hybrid-timeline
+     * @description No description provided.
+     *
+     * **Credential required**: *Yes* / **Permission**: *read:account*
+     */
+    post: operations['notes___vmimi-relay-hybrid-timeline'];
+  };
+  '/notes/vmimi-relay-timeline': {
+    /**
+     * notes/vmimi-relay-timeline
+     * @description No description provided.
+     *
+     * **Credential required**: *No*
+     */
+    post: operations['notes___vmimi-relay-timeline'];
+  };
   '/notifications/create': {
     /**
      * notifications/create
@@ -4987,9 +5023,11 @@ export type components = {
       followingCount: number;
       followersCount: number;
       isNotResponding: boolean;
+      /** Format: date-time */
+      notRespondingSince: string | null;
       isSuspended: boolean;
       /** @enum {string} */
-      suspensionState: 'none' | 'manuallySuspended' | 'goneSuspended' | 'autoSuspendedForNotResponding';
+      suspensionState: 'none' | 'manuallySuspended' | 'goneSuspended' | 'autoSuspendedForNotResponding' | 'softwareSuspended';
       isBlocked: boolean;
       /** @example misskey */
       softwareName: string | null;
@@ -5202,6 +5240,7 @@ export type components = {
       usersCount: number;
     });
     RolePolicies: {
+      vrtlAvailable: boolean;
       gtlAvailable: boolean;
       ltlAvailable: boolean;
       canPublicNote: boolean;
@@ -5409,6 +5448,7 @@ export type components = {
         emailRequiredForSignup: boolean;
         localTimeline: boolean;
         globalTimeline: boolean;
+        vmimiRelayTimeline: boolean;
         hcaptcha: boolean;
         turnstile: boolean;
         recaptcha: boolean;
@@ -8765,8 +8805,128 @@ export type operations = {
             /** @enum {string} */
             federation: 'all' | 'specified' | 'none';
             federationHosts: string[];
+            deliverSuspendedSoftware: {
+                software: string;
+                versionRange: string;
+              }[];
+            nirilaBlockMentionsFromUnfamiliarRemoteUsers: boolean;
+            nirilaAllowedUnfamiliarRemoteUserIds: string[];
           };
         };
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
+   * admin/nirila-delete-user-log-access
+   * @description No description provided.
+   *
+   * **Credential required**: *Yes* / **Permission**: *read:admin:nirila-delete-user-log-access*
+   */
+  'admin___nirila-delete-user-log-access': {
+    requestBody: {
+      content: {
+        'application/json': {
+          /** @default 10 */
+          limit?: number;
+          /** Format: misskey:id */
+          sinceId?: string;
+          /** Format: misskey:id */
+          untilId?: string;
+          email?: string;
+          username?: string;
+          /** Format: misskey:id */
+          userId?: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': Record<string, never> | Record<string, never>[];
+        };
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
+   * admin/note-public-to-home
+   * @description No description provided.
+   *
+   * **Credential required**: *Yes* / **Permission**: *write:notes*
+   */
+  'admin___note-public-to-home': {
+    requestBody: {
+      content: {
+        'application/json': {
+          /** Format: misskey:id */
+          noteId: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (without any results) */
+      204: {
+        content: never;
       };
       /** @description Client error */
       400: {
@@ -11412,6 +11572,7 @@ export type operations = {
           manifestJsonOverride?: string;
           enableFanoutTimeline?: boolean;
           enableFanoutTimelineDbFallback?: boolean;
+          vmimiRelayTimelineCacheMax?: number;
           perLocalUserUserTimelineCacheMax?: number;
           perRemoteUserUserTimelineCacheMax?: number;
           perUserHomeTimelineCacheMax?: number;
@@ -11431,6 +11592,12 @@ export type operations = {
           /** @enum {string} */
           federation?: 'all' | 'none' | 'specified';
           federationHosts?: string[];
+          deliverSuspendedSoftware?: {
+              software: string;
+              versionRange: string;
+            }[];
+          nirilaBlockMentionsFromUnfamiliarRemoteUsers?: boolean;
+          nirilaAllowedUnfamiliarRemoteUserIds?: string[];
         };
       };
     };
@@ -14594,11 +14761,9 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (with results) */
-      200: {
-        content: {
-          'application/json': unknown;
-        };
+      /** @description OK (without any results) */
+      204: {
+        content: never;
       };
       /** @description Client error */
       400: {
@@ -14649,11 +14814,9 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (with results) */
-      200: {
-        content: {
-          'application/json': unknown;
-        };
+      /** @description OK (without any results) */
+      204: {
+        content: never;
       };
       /** @description Client error */
       400: {
@@ -14877,11 +15040,9 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (with results) */
-      200: {
-        content: {
-          'application/json': unknown;
-        };
+      /** @description OK (without any results) */
+      204: {
+        content: never;
       };
       /** @description Client error */
       400: {
@@ -15051,11 +15212,9 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (with results) */
-      200: {
-        content: {
-          'application/json': unknown;
-        };
+      /** @description OK (without any results) */
+      204: {
+        content: never;
       };
       /** @description Client error */
       400: {
@@ -15167,11 +15326,9 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (with results) */
-      200: {
-        content: {
-          'application/json': unknown;
-        };
+      /** @description OK (without any results) */
+      204: {
+        content: never;
       };
       /** @description Client error */
       400: {
@@ -15339,11 +15496,9 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (with results) */
-      200: {
-        content: {
-          'application/json': unknown;
-        };
+      /** @description OK (without any results) */
+      204: {
+        content: never;
       };
       /** @description Client error */
       400: {
@@ -15451,11 +15606,9 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (with results) */
-      200: {
-        content: {
-          'application/json': unknown;
-        };
+      /** @description OK (without any results) */
+      204: {
+        content: never;
       };
       /** @description Client error */
       400: {
@@ -15566,11 +15719,9 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (with results) */
-      200: {
-        content: {
-          'application/json': unknown;
-        };
+      /** @description OK (without any results) */
+      204: {
+        content: never;
       };
       /** @description Client error */
       400: {
@@ -23418,7 +23569,7 @@ export type operations = {
           url: string;
           /** @default */
           secret?: string;
-          on: ('mention' | 'unfollow' | 'follow' | 'followed' | 'note' | 'reply' | 'renote' | 'reaction')[];
+          on: (('mention' | 'unfollow' | 'follow' | 'followed' | 'note' | 'reply' | 'renote' | 'reaction') | string)[];
         };
       };
     };
@@ -23432,7 +23583,7 @@ export type operations = {
             /** Format: misskey:id */
             userId: string;
             name: string;
-            on: ('mention' | 'unfollow' | 'follow' | 'followed' | 'note' | 'reply' | 'renote' | 'reaction')[];
+            on: (('mention' | 'unfollow' | 'follow' | 'followed' | 'note' | 'reply' | 'renote' | 'reaction') | string)[];
             url: string;
             secret: string;
             active: boolean;
@@ -23543,7 +23694,7 @@ export type operations = {
               /** Format: misskey:id */
               userId: string;
               name: string;
-              on: ('mention' | 'unfollow' | 'follow' | 'followed' | 'note' | 'reply' | 'renote' | 'reaction')[];
+              on: (('mention' | 'unfollow' | 'follow' | 'followed' | 'note' | 'reply' | 'renote' | 'reaction') | string)[];
               url: string;
               secret: string;
               active: boolean;
@@ -23610,7 +23761,7 @@ export type operations = {
             /** Format: misskey:id */
             userId: string;
             name: string;
-            on: ('mention' | 'unfollow' | 'follow' | 'followed' | 'note' | 'reply' | 'renote' | 'reaction')[];
+            on: (('mention' | 'unfollow' | 'follow' | 'followed' | 'note' | 'reply' | 'renote' | 'reaction') | string)[];
             url: string;
             secret: string;
             active: boolean;
@@ -23732,7 +23883,7 @@ export type operations = {
           name?: string;
           url?: string;
           secret?: string | null;
-          on?: ('mention' | 'unfollow' | 'follow' | 'followed' | 'note' | 'reply' | 'renote' | 'reaction')[];
+          on?: (('mention' | 'unfollow' | 'follow' | 'followed' | 'note' | 'reply' | 'renote' | 'reaction') | string)[];
           active?: boolean;
         };
       };
@@ -26138,6 +26289,146 @@ export type operations = {
            * @default false
            */
           withFiles?: boolean;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': components['schemas']['Note'][];
+        };
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
+   * notes/vmimi-relay-hybrid-timeline
+   * @description No description provided.
+   *
+   * **Credential required**: *Yes* / **Permission**: *read:account*
+   */
+  'notes___vmimi-relay-hybrid-timeline': {
+    requestBody: {
+      content: {
+        'application/json': {
+          /** @default false */
+          withFiles?: boolean;
+          /** @default true */
+          withRenotes?: boolean;
+          /** @default false */
+          withReplies?: boolean;
+          /** @default true */
+          withLocalOnly?: boolean;
+          /** @default 10 */
+          limit?: number;
+          /** @default true */
+          allowPartial?: boolean;
+          /** Format: misskey:id */
+          sinceId?: string;
+          /** Format: misskey:id */
+          untilId?: string;
+          sinceDate?: number;
+          untilDate?: number;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': components['schemas']['Note'][];
+        };
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
+   * notes/vmimi-relay-timeline
+   * @description No description provided.
+   *
+   * **Credential required**: *No*
+   */
+  'notes___vmimi-relay-timeline': {
+    requestBody: {
+      content: {
+        'application/json': {
+          /** @default false */
+          withFiles?: boolean;
+          /** @default true */
+          withRenotes?: boolean;
+          /** @default false */
+          withReplies?: boolean;
+          /** @default true */
+          withLocalOnly?: boolean;
+          /** @default 10 */
+          limit?: number;
+          /** @default true */
+          allowPartial?: boolean;
+          /** Format: misskey:id */
+          sinceId?: string;
+          /** Format: misskey:id */
+          untilId?: string;
+          sinceDate?: number;
+          untilDate?: number;
         };
       };
     };
@@ -29701,6 +29992,7 @@ export type operations = {
           allowPartial?: boolean;
           /** @default false */
           withFiles?: boolean;
+          includeSensitiveChannel?: boolean;
         };
       };
     };

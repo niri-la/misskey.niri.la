@@ -528,6 +528,38 @@ export const meta = {
 					optional: false, nullable: false,
 				},
 			},
+			deliverSuspendedSoftware: {
+				type: 'array',
+				optional: false, nullable: false,
+				items: {
+					type: 'object',
+					optional: false, nullable: false,
+					properties: {
+						software: {
+							type: 'string',
+							optional: false, nullable: false,
+						},
+						versionRange: {
+							type: 'string',
+							optional: false, nullable: false,
+						},
+					},
+				},
+			},
+			nirilaBlockMentionsFromUnfamiliarRemoteUsers: {
+				type: 'boolean',
+				optional: false, nullable: false,
+			},
+			nirilaAllowedUnfamiliarRemoteUserIds: {
+				type: 'array',
+				optional: false,
+				nullable: false,
+				items: {
+					type: 'string',
+					optional: false,
+					nullable: false,
+				},
+			},
 		},
 	},
 } as const;
@@ -655,6 +687,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				bannedEmailDomains: instance.bannedEmailDomains,
 				policies: { ...DEFAULT_POLICIES, ...instance.policies },
 				manifestJsonOverride: instance.manifestJsonOverride,
+				vmimiRelayTimelineCacheMax: instance.vmimiRelayTimelineCacheMax,
 				enableFanoutTimeline: instance.enableFanoutTimeline,
 				enableFanoutTimelineDbFallback: instance.enableFanoutTimelineDbFallback,
 				perLocalUserUserTimelineCacheMax: instance.perLocalUserUserTimelineCacheMax,
@@ -672,6 +705,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				urlPreviewSummaryProxyUrl: instance.urlPreviewSummaryProxyUrl,
 				federation: instance.federation,
 				federationHosts: instance.federationHosts,
+				deliverSuspendedSoftware: instance.deliverSuspendedSoftware,
+				nirilaBlockMentionsFromUnfamiliarRemoteUsers: instance.nirilaBlockMentionsFromUnfamiliarRemoteUsers,
+				nirilaAllowedUnfamiliarRemoteUserIds: instance.nirilaAllowedUnfamiliarRemoteUserIds,
 			};
 		});
 	}

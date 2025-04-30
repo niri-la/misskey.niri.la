@@ -60,6 +60,7 @@ jobs:
   e2e:
     name: E2E tests (frontend)
     runs-on: ubuntu-latest
+    if: false
 
     strategy:
       fail-fast: false

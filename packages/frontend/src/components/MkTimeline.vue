@@ -66,11 +66,13 @@ const props = withDefaults(defineProps<{
 	withReplies?: boolean;
 	withSensitive?: boolean;
 	onlyFiles?: boolean;
+	withLocalOnly?: boolean;
 }>(), {
 	withRenotes: true,
-	withReplies: false,
+	withReplies: true,
 	withSensitive: true,
 	onlyFiles: false,
+	withLocalOnly: true,
 });
 
 const emit = defineEmits<{
@@ -87,6 +89,7 @@ type TimelineQueryType = {
 	withRenotes?: boolean,
 	withReplies?: boolean,
 	withFiles?: boolean,
+	withLocalOnly?: boolean,
 	visibility?: string,
 	listId?: string,
 	channelId?: string,
@@ -151,6 +154,20 @@ function connectChannel() {
 		connection = stream.useChannel('globalTimeline', {
 			withRenotes: props.withRenotes,
 			withFiles: props.onlyFiles ? true : undefined,
+		});
+	} else if (props.src === 'vmimi-relay') {
+		connection = stream.useChannel('vmimiRelayTimeline', {
+			withRenotes: props.withRenotes,
+			withFiles: props.onlyFiles ? true : undefined,
+			withReplies: props.withReplies,
+			withLocalOnly: props.withLocalOnly,
+		});
+	} else if (props.src === 'vmimi-relay-social') {
+		connection = stream.useChannel('vmimiRelayHybridTimeline', {
+			withRenotes: props.withRenotes,
+			withFiles: props.onlyFiles ? true : undefined,
+			withReplies: props.withReplies,
+			withLocalOnly: props.withLocalOnly,
 		});
 	} else if (props.src === 'mentions') {
 		connection = stream.useChannel('main');
@@ -223,6 +240,22 @@ function updatePaginationQuery() {
 		query = {
 			withRenotes: props.withRenotes,
 			withFiles: props.onlyFiles ? true : undefined,
+		};
+	} else if (props.src === 'vmimi-relay') {
+		endpoint = 'notes/vmimi-relay-timeline';
+		query = {
+			withRenotes: props.withRenotes,
+			withFiles: props.onlyFiles ? true : undefined,
+			withReplies: props.withReplies,
+			withLocalOnly: props.withLocalOnly,
+		};
+	} else if (props.src === 'vmimi-relay-social') {
+		endpoint = 'notes/vmimi-relay-hybrid-timeline';
+		query = {
+			withRenotes: props.withRenotes,
+			withFiles: props.onlyFiles ? true : undefined,
+			withReplies: props.withReplies,
+			withLocalOnly: props.withLocalOnly,
 		};
 	} else if (props.src === 'mentions') {
 		endpoint = 'notes/mentions';

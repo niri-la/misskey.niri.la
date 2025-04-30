@@ -119,6 +119,9 @@ export const PREF_DEF = {
 	keepCw: {
 		default: true,
 	},
+	keepOriginalUploading: {
+		default: false,
+	},
 	rememberNoteVisibility: {
 		default: false,
 	},
@@ -159,6 +162,9 @@ export const PREF_DEF = {
 	},
 	nsfw: {
 		default: 'respect' as 'respect' | 'force' | 'ignore',
+	},
+	collapseSensitiveChannel: {
+		default: true,
 	},
 	highlightSensitiveMedia: {
 		default: false,
@@ -303,6 +309,12 @@ export const PREF_DEF = {
 	useNativeUiForVideoAudioPlayer: {
 		default: false,
 	},
+	imageCompressionMode: {
+		default: 'noResizeCompress' as 'resizeCompress' | 'noResizeCompress' | 'resizeCompressLossy' | 'noResizeCompressLossy',
+	},
+	imageResizeSize: {
+		default: 2560,
+	},
 	keepOriginalFilename: {
 		default: true,
 	},
@@ -325,13 +337,16 @@ export const PREF_DEF = {
 		default: false,
 	},
 	defaultFollowWithReplies: {
-		default: false,
+		default: true,
 	},
 	makeEveryTextElementsSelectable: {
 		default: DEFAULT_DEVICE_KIND === 'desktop',
 	},
 	showNavbarSubButtons: {
 		default: true,
+	},
+	showTitlebar: {
+		default: false,
 	},
 	plugins: {
 		default: [] as Plugin[],

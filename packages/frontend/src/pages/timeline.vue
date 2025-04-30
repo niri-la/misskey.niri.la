@@ -13,7 +13,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<div v-if="queue > 0" :class="$style.new"><button class="_buttonPrimary" :class="$style.newButton" @click="top()">{{ i18n.ts.newNoteRecived }}</button></div>
 		<MkTimeline
 			ref="tlComponent"
-			:key="src + withRenotes + withReplies + onlyFiles + withSensitive"
+			:key="src + withRenotes + withReplies + onlyFiles + withLocalOnly + withSensitive"
 			:class="$style.tl"
 			:src="src.split(':')[0]"
 			:list="src.split(':')[1]"
@@ -21,6 +21,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 			:withReplies="withReplies"
 			:withSensitive="withSensitive"
 			:onlyFiles="onlyFiles"
+			:withLocalOnly="withLocalOnly"
 			:sound="true"
 			@queue="queueUpdated"
 		/>
@@ -45,7 +46,7 @@ import { antennasCache, userListsCache, favoritedChannelsCache } from '@/cache.j
 import { deviceKind } from '@/utility/device-kind.js';
 import { deepMerge } from '@/utility/merge.js';
 import { miLocalStorage } from '@/local-storage.js';
-import { availableBasicTimelines, hasWithReplies, isAvailableBasicTimeline, isBasicTimeline, basicTimelineIconClass } from '@/timelines.js';
+import { availableBasicTimelines, hasWithReplies, hasWithLocalOnly, isAvailableBasicTimeline, isBasicTimeline, basicTimelineIconClass } from '@/timelines.js';
 import { prefer } from '@/preferences.js';
 
 provide('shouldOmitHeaderTitle', true);
@@ -56,7 +57,7 @@ const pageComponent = useTemplateRef('pageComponent');
 type TimelinePageSrc = BasicTimelineType | `list:${string}`;
 
 const queue = ref(0);
-const srcWhenNotSignin = ref<'local' | 'global'>(isAvailableBasicTimeline('local') ? 'local' : 'global');
+const srcWhenNotSignin = ref<'local' | 'global' | 'vmimi-relay'>(isAvailableBasicTimeline('local') ? 'local' : 'global');
 const src = computed<TimelinePageSrc>({
 	get: () => ($i ? store.r.tl.value.src : srcWhenNotSignin.value),
 	set: (x) => saveSrc(x),
@@ -64,6 +65,10 @@ const src = computed<TimelinePageSrc>({
 const withRenotes = computed<boolean>({
 	get: () => store.r.tl.value.filter.withRenotes,
 	set: (x) => saveTlFilter('withRenotes', x),
+});
+const withLocalOnly = computed<boolean>({
+	get: () => store.r.tl.value.filter.withLocalOnly,
+	set: (x) => saveTlFilter('withLocalOnly', x),
 });
 
 // computed内での無限ループを防ぐためのフラグ
@@ -76,7 +81,7 @@ const localSocialTLFilterSwitchStore = ref<'withReplies' | 'onlyFiles' | false>(
 const withReplies = computed<boolean>({
 	get: () => {
 		if (!$i) return false;
-		if (['local', 'social'].includes(src.value) && localSocialTLFilterSwitchStore.value === 'onlyFiles') {
+		if (['local', 'social', 'vmimi-relay', 'vmimi-relay-social'].includes(src.value) && localSocialTLFilterSwitchStore.value === 'onlyFiles') {
 			return false;
 		} else {
 			return store.r.tl.value.filter.withReplies;
@@ -86,7 +91,7 @@ const withReplies = computed<boolean>({
 });
 const onlyFiles = computed<boolean>({
 	get: () => {
-		if (['local', 'social'].includes(src.value) && localSocialTLFilterSwitchStore.value === 'withReplies') {
+		if (['local', 'social', 'vmimi-relay', 'vmimi-relay-social'].includes(src.value) && localSocialTLFilterSwitchStore.value === 'withReplies') {
 			return false;
 		} else {
 			return store.r.tl.value.filter.onlyFiles;
@@ -195,8 +200,8 @@ function saveSrc(newSrc: TimelinePageSrc): void {
 	}
 
 	store.set('tl', out);
-	if (['local', 'global'].includes(newSrc)) {
-		srcWhenNotSignin.value = newSrc as 'local' | 'global';
+	if (['local', 'global', 'vmimi-relay'].includes(newSrc)) {
+		srcWhenNotSignin.value = newSrc as 'local' | 'global' | 'vmimi-relay';
 	}
 }
 
@@ -273,6 +278,14 @@ const headerActions = computed(() => {
 					ref: onlyFiles,
 					disabled: isBasicTimeline(src.value) && hasWithReplies(src.value) ? withReplies : false,
 				});
+
+				if (isBasicTimeline(src.value) && hasWithLocalOnly(src.value)) {
+					menuItems.push({
+						type: 'switch',
+						text: i18n.ts.showLocalOnlyInTimeline,
+						ref: withLocalOnly,
+					});
+				}
 
 				os.popupMenu(menuItems, ev.currentTarget ?? ev.target);
 			},

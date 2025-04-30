@@ -51,6 +51,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 					<MkSwitch v-model="event_mention">{{ i18n.ts._webhookSettings._events.mention }}</MkSwitch>
 					<MkButton transparent :class="$style.testButton" :disabled="!(active && event_mention)" @click="test('mention')"><i class="ti ti-send"></i></MkButton>
 				</div>
+
+				<MkTextarea v-if="$i?.isAdmin" v-model="users">
+					<template #label>{{ i18n.ts._webhookSettings._events.usersLabel }}</template>
+					<template #caption>{{ i18n.ts._webhookSettings._events.usersCaption }}</template>
+				</MkTextarea>
 			</div>
 
 			<div :class="$style.description">
@@ -80,6 +85,8 @@ import { misskeyApi } from '@/utility/misskey-api.js';
 import { i18n } from '@/i18n.js';
 import { definePage } from '@/page.js';
 import { useRouter } from '@/router.js';
+import { $i } from '@/i.js';
+import MkTextarea from '@/components/MkTextarea.vue';
 
 const router = useRouter();
 
@@ -103,8 +110,9 @@ const event_reply = ref(webhook.on.includes('reply'));
 const event_renote = ref(webhook.on.includes('renote'));
 const event_reaction = ref(webhook.on.includes('reaction'));
 const event_mention = ref(webhook.on.includes('mention'));
+const users = ref((webhook.on as string[]).filter(x => x.startsWith('note@')).map(x => x.substring('note@'.length)).join('\n'));
 
-function save() {
+async function save(): Promise<void> {
 	const events: Misskey.entities.UserWebhook['on'] = [];
 	if (event_follow.value) events.push('follow');
 	if (event_followed.value) events.push('followed');
@@ -113,6 +121,7 @@ function save() {
 	if (event_renote.value) events.push('renote');
 	if (event_reaction.value) events.push('reaction');
 	if (event_mention.value) events.push('mention');
+	if (users.value !== '') events.push(...users.value.split('\n').filter(x => x).map(x => `note@${x}`));
 
 	os.apiWithDialog('i/webhooks/update', {
 		name: name.value,

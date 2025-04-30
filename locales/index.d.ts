@@ -235,6 +235,10 @@ export interface Locale extends ILocale {
      */
     "deleteAndEditConfirm": string;
     /**
+     * ホーム投稿にする
+     */
+    "makeNoteHome": string;
+    /**
      * リストに追加
      */
     "addToList": string;
@@ -526,6 +530,10 @@ export interface Locale extends ILocale {
      * センシティブ
      */
     "sensitive": string;
+    /**
+     * センシティブチャンネル自動CW
+     */
+    "sensitiveChannelAutoCW": string;
     /**
      * 追加
      */
@@ -899,6 +907,10 @@ export interface Locale extends ILocale {
      */
     "software": string;
     /**
+     * ソフトウェア名
+     */
+    "softwareName": string;
+    /**
      * バージョン
      */
     "version": string;
@@ -1014,6 +1026,10 @@ export interface Locale extends ILocale {
      * このノートを削除しますか？
      */
     "noteDeleteConfirm": string;
+    /**
+     * 本当にホーム投稿にしますか？
+     */
+    "makeNoteHomeConfirm": string;
     /**
      * これ以上ピン留めできません
      */
@@ -3331,6 +3347,10 @@ export interface Locale extends ILocale {
      */
     "useReactionPickerForContextMenu": string;
     /**
+     * ユーザページでセンシティブチャンネルの投稿を閉じる
+     */
+    "collapseSensitiveChannel": string;
+    /**
      * {users}が入力中
      */
     "typingUsers": ParameterizedString<"users">;
@@ -4863,6 +4883,10 @@ export interface Locale extends ILocale {
      */
     "hideRepliesToOthersInTimelineAll": string;
     /**
+     * TLに連合なし投稿を含める
+     */
+    "showLocalOnlyInTimeline": string;
+    /**
      * この操作は元に戻せません。本当にTLに現在フォロー中の人全員の返信を含めるようにしますか？
      */
     "confirmShowRepliesAll": string;
@@ -5074,6 +5098,10 @@ export interface Locale extends ILocale {
      * {name}のセンシティブなファイルを含む投稿
      */
     "userSaysSomethingSensitive": ParameterizedString<"name">;
+    /**
+     * {name}のセンシティブチャンネルでの投稿
+     */
+    "userSaysSomethingInSensitiveChannel": ParameterizedString<"name">;
     /**
      * スワイプしてタブを切り替える
      */
@@ -5409,6 +5437,10 @@ export interface Locale extends ILocale {
      * フォルダを作って整理することもできます。
      */
     "driveAboutTip": string;
+    /**
+     * スクロールして閉じる
+     */
+    "scrollToClose": string;
     "_chat": {
         /**
          * まだメッセージはありません
@@ -5871,6 +5903,10 @@ export interface Locale extends ILocale {
              * サーバー応答なしのため停止中
              */
             "autoSuspendedForNotResponding": string;
+            /**
+             * 配信停止中のソフトウェアであるため停止中
+             */
+            "softwareSuspended": string;
         };
     };
     "_bubbleGame": {
@@ -6280,6 +6316,14 @@ export interface Locale extends ILocale {
          * グローバルタイムラインでは、接続している他のすべてのサーバーからの投稿を見られます。
          */
         "global": string;
+        /**
+         * ぶいみみリレータイムラインでは、バーチャルケモミミリレーサーバーに参加しているサーバーのユーザー全員の投稿を見られます。
+         */
+        "vmimi-relay": string;
+        /**
+         * ぶいみみソーシャルタイムラインには、ホームタイムラインとぶいみみリレータイムラインの投稿が両方表示されます。
+         */
+        "vmimi-relay-social": string;
     };
     "_serverRules": {
         /**
@@ -6356,6 +6400,14 @@ export interface Locale extends ILocale {
          * 一定期間モデレーターのアクティビティが検出されなかった場合、スパム防止のためこの設定は自動でオフになります。
          */
         "thisSettingWillAutomaticallyOffWhenModeratorsInactive": string;
+        /**
+         * 配信停止中のソフトウェア
+         */
+        "deliverSuspendedSoftware": string;
+        /**
+         * 脆弱性などの理由で、サーバーのソフトウェアの名前及びバージョンの範囲を指定して配信を停止できます。このバージョン情報はサーバーが提供したものであり、信頼性は保証されません。バージョン指定には semver の範囲指定が使用できますが、>= 2024.3.1 と指定すると 2024.3.1-custom.0 のようなカスタムバージョンが含まれないため、>= 2024.3.1-0 のように prerelease の指定を行うことを推奨します。
+         */
+        "deliverSuspendedSoftwareDescription": string;
     };
     "_accountMigration": {
         /**
@@ -7436,6 +7488,10 @@ export interface Locale extends ILocale {
              */
             "ltlAvailable": string;
             /**
+             * ぶいみみリレータイムラインの閲覧
+             */
+            "vrtlAvailable": string;
+            /**
              * パブリック投稿の許可
              */
             "canPublicNote": string;
@@ -7992,6 +8048,14 @@ export interface Locale extends ILocale {
          * プロジェクトメンバー
          */
         "projectMembers": string;
+        /**
+         * このサーバーで使用しているforkの主要な開発者
+         */
+        "forkContributors": string;
+        /**
+         * このサーバーで使用しているforkの全てのコントリビューター
+         */
+        "allForkContributors": string;
     };
     "_displayOfSensitiveMedia": {
         /**
@@ -9638,6 +9702,14 @@ export interface Locale extends ILocale {
          * グローバル
          */
         "global": string;
+        /**
+         * ぶいみみリレー
+         */
+        "vmimi-relay": string;
+        /**
+         * ぶいみみソーシャル
+         */
+        "vmimi-relay-social": string;
     };
     "_play": {
         /**
@@ -10423,6 +10495,54 @@ export interface Locale extends ILocale {
             "deleteConfirm": string;
         };
     };
+    "_imageCompressionMode": {
+        /**
+         * 画像の圧縮形式
+         */
+        "title": string;
+        /**
+         * オリジナル画像を保持しない場合に、Web公開用画像の圧縮形式を選択できます。
+         */
+        "description": string;
+        /**
+         * 画像を縮小する
+         */
+        "imageResize": string;
+        /**
+         * 縮小する場合は設定値以下になるように縮小されます。縮小処理でファイルサイズが大きくなってしまう場合は元の画像が利用されます。
+         */
+        "imageResizeDescription": string;
+        /**
+         * 画像を常に非可逆圧縮する
+         */
+        "imageCompressionLossy": string;
+        /**
+         * 非可逆圧縮を指定しない場合は、元画像に応じて非可逆圧縮か可逆圧縮かが自動的に選択されます。
+         */
+        "imageCompressionLossyDescription": string;
+        "_imageResizeSize": {
+            /**
+             * 画像縮小時の解像度
+             */
+            "title": string;
+            /**
+             * 2048x2048
+             */
+            "max2048": string;
+            /**
+             * 2560x2560
+             */
+            "max2560": string;
+            /**
+             * 4096x4096
+             */
+            "max4096": string;
+            /**
+             * 8192x8192
+             */
+            "max8192": string;
+        };
+    };
     "_moderationLogTypes": {
         /**
          * ロールを作成
@@ -10624,6 +10744,10 @@ export interface Locale extends ILocale {
          * プロキシアカウントの説明を更新
          */
         "updateProxyAccountDescription": string;
+        /**
+         * ノートをホーム投稿に変更
+         */
+        "makeNoteHome": string;
     };
     "_fileViewer": {
         /**
@@ -11557,36 +11681,6 @@ export interface Locale extends ILocale {
          * 修復ツールを起動
          */
         "otherOption3": string;
-    };
-    "_search": {
-        /**
-         * 全て
-         */
-        "searchScopeAll": string;
-        /**
-         * ローカル
-         */
-        "searchScopeLocal": string;
-        /**
-         * サーバー指定
-         */
-        "searchScopeServer": string;
-        /**
-         * ユーザー指定
-         */
-        "searchScopeUser": string;
-        /**
-         * サーバーのホストを入力してください
-         */
-        "pleaseEnterServerHost": string;
-        /**
-         * ユーザーを選択してください
-         */
-        "pleaseSelectUser": string;
-        /**
-         * 例: misskey.example.com
-         */
-        "serverHostPlaceholder": string;
     };
 }
 declare const locales: {

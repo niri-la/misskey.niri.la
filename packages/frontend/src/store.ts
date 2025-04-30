@@ -29,6 +29,8 @@ export const store = markRaw(new Pizzax('base', {
 			local: false,
 			social: false,
 			global: false,
+			'vmimi-relay': false,
+			'vmimi-relay-social': false,
 		},
 	},
 	abusesTutorial: {
@@ -66,13 +68,14 @@ export const store = markRaw(new Pizzax('base', {
 	tl: {
 		where: 'deviceAccount',
 		default: {
-			src: 'home' as 'home' | 'local' | 'social' | 'global' | `list:${string}`,
+			src: 'home' as 'home' | 'local' | 'social' | 'global' | 'vmimi-relay' | 'vmimi-relay-social' | `list:${string}`,
 			userList: null as Misskey.entities.UserList | null,
 			filter: {
 				withReplies: true,
 				withRenotes: true,
 				withSensitive: true,
 				onlyFiles: false,
+				withLocalOnly: true,
 			},
 		},
 	},
@@ -129,7 +132,7 @@ export const store = markRaw(new Pizzax('base', {
 	//#region TODO: そのうち消す (preferに移行済み)
 	defaultWithReplies: {
 		where: 'account',
-		default: false,
+		default: true,
 	},
 	reactions: {
 		where: 'account',
@@ -221,6 +224,10 @@ export const store = markRaw(new Pizzax('base', {
 	nsfw: {
 		where: 'device',
 		default: 'respect' as 'respect' | 'force' | 'ignore',
+	},
+	collapseSensitiveChannel: {
+		where: 'device',
+		default: true,
 	},
 	highlightSensitiveMedia: {
 		where: 'device',
@@ -473,6 +480,14 @@ export const store = markRaw(new Pizzax('base', {
 			bgmVolume: 0.25,
 			sfxVolume: 1,
 		},
+	},
+	imageCompressionMode: {
+		where: 'account',
+		default: 'noResizeCompress' as 'resizeCompress' | 'noResizeCompress' | 'resizeCompressLossy' | 'noResizeCompressLossy',
+	},
+	imageResizeSize: {
+		where: 'account',
+		default: '2560',
 	},
 	//#endregion
 }));

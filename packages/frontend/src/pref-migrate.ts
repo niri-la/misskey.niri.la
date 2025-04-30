@@ -71,6 +71,7 @@ export function migrateOldSettings() {
 		prefer.commit('collapseRenotes', store.s.collapseRenotes);
 		prefer.commit('rememberNoteVisibility', store.s.rememberNoteVisibility);
 		prefer.commit('uploadFolder', store.s.uploadFolder);
+		prefer.commit('keepOriginalUploading', store.s.keepOriginalUploading);
 		prefer.commit('menu', [...store.s.menu, 'chat']);
 		prefer.commit('statusbars', store.s.statusbars);
 		prefer.commit('pinnedUserLists', store.s.pinnedUserLists);
@@ -138,6 +139,9 @@ export function migrateOldSettings() {
 		prefer.commit('sound.on.reaction', store.s.sound_reaction as any);
 		prefer.commit('defaultNoteVisibility', store.s.defaultNoteVisibility);
 		prefer.commit('defaultNoteLocalOnly', store.s.defaultNoteLocalOnly);
+		prefer.commit('imageCompressionMode', store.s.imageCompressionMode);
+		prefer.commit('imageResizeSize', parseInt(store.s.imageResizeSize));
+		prefer.commit('collapseSensitiveChannel', store.s.collapseSensitiveChannel);
 
 		window.setTimeout(() => {
 			unisonReload();

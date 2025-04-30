@@ -145,6 +145,7 @@ export const paramDef = {
 		manifestJsonOverride: { type: 'string' },
 		enableFanoutTimeline: { type: 'boolean' },
 		enableFanoutTimelineDbFallback: { type: 'boolean' },
+		vmimiRelayTimelineCacheMax: { type: 'integer' },
 		perLocalUserUserTimelineCacheMax: { type: 'integer' },
 		perRemoteUserUserTimelineCacheMax: { type: 'integer' },
 		perUserHomeTimelineCacheMax: { type: 'integer' },
@@ -183,6 +184,26 @@ export const paramDef = {
 			type: 'array',
 			items: {
 				type: 'string',
+			},
+		},
+		deliverSuspendedSoftware: {
+			type: 'array',
+			items: {
+				type: 'object',
+				properties: {
+					software: { type: 'string' },
+					versionRange: { type: 'string' },
+				},
+				required: ['software', 'versionRange'],
+			},
+		},
+		nirilaBlockMentionsFromUnfamiliarRemoteUsers: { type: 'boolean', nullable: false },
+		nirilaAllowedUnfamiliarRemoteUserIds: {
+			type: 'array',
+			nullable: false,
+			items: {
+				type: 'string',
+				nullable: false,
 			},
 		},
 	},
@@ -617,6 +638,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				set.perLocalUserUserTimelineCacheMax = ps.perLocalUserUserTimelineCacheMax;
 			}
 
+			if (ps.vmimiRelayTimelineCacheMax !== undefined) {
+				set.vmimiRelayTimelineCacheMax = ps.vmimiRelayTimelineCacheMax;
+			}
+
 			if (ps.perRemoteUserUserTimelineCacheMax !== undefined) {
 				set.perRemoteUserUserTimelineCacheMax = ps.perRemoteUserUserTimelineCacheMax;
 			}
@@ -671,8 +696,20 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				set.federation = ps.federation;
 			}
 
+			if (ps.deliverSuspendedSoftware !== undefined) {
+				set.deliverSuspendedSoftware = ps.deliverSuspendedSoftware;
+			}
+
 			if (Array.isArray(ps.federationHosts)) {
 				set.federationHosts = ps.federationHosts.filter(Boolean).map(x => x.toLowerCase());
+			}
+
+			if (ps.nirilaBlockMentionsFromUnfamiliarRemoteUsers !== undefined) {
+				set.nirilaBlockMentionsFromUnfamiliarRemoteUsers = ps.nirilaBlockMentionsFromUnfamiliarRemoteUsers;
+			}
+
+			if (ps.nirilaAllowedUnfamiliarRemoteUserIds !== undefined) {
+				set.nirilaAllowedUnfamiliarRemoteUserIds = ps.nirilaAllowedUnfamiliarRemoteUserIds;
 			}
 
 			const before = await this.metaService.fetch(true);

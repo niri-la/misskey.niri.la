@@ -54,6 +54,7 @@ copyLinkRenote: "リノートのリンクをコピー"
 delete: "削除"
 deleteAndEdit: "削除して編集"
 deleteAndEditConfirm: "このノートを削除してもう一度編集しますか？このノートへのリアクション、リノート、返信も全て削除されます。"
+makeNoteHome: "ホーム投稿にする"
 addToList: "リストに追加"
 addToAntenna: "アンテナに追加"
 sendMessage: "メッセージを送信"
@@ -127,6 +128,7 @@ pinned: "ピン留め"
 you: "あなた"
 clickToShow: "クリックして表示"
 sensitive: "センシティブ"
+sensitiveChannelAutoCW: "センシティブチャンネル自動CW"
 add: "追加"
 reaction: "リアクション"
 reactions: "リアクション"
@@ -220,6 +222,7 @@ silenceThisInstance: "サーバーをサイレンス"
 mediaSilenceThisInstance: "サーバーをメディアサイレンス"
 operations: "操作"
 software: "ソフトウェア"
+softwareName: "ソフトウェア名"
 version: "バージョン"
 metadata: "メタデータ"
 withNFiles: "{n}つのファイル"
@@ -249,6 +252,7 @@ blockedUsers: "ブロックしたユーザー"
 noUsers: "ユーザーはいません"
 editProfile: "プロフィールを編集"
 noteDeleteConfirm: "このノートを削除しますか？"
+makeNoteHomeConfirm: "本当にホーム投稿にしますか？"
 pinLimitExceeded: "これ以上ピン留めできません"
 intro: "Misskeyのインストールが完了しました！管理者アカウントを作成しましょう。"
 done: "完了"
@@ -828,6 +832,7 @@ emailNotification: "メール通知"
 publish: "公開"
 inChannelSearch: "チャンネル内検索"
 useReactionPickerForContextMenu: "右クリックでリアクションピッカーを開く"
+collapseSensitiveChannel: "ユーザページでセンシティブチャンネルの投稿を閉じる"
 typingUsers: "{users}が入力中"
 jumpToSpecifiedDate: "特定の日付にジャンプ"
 showingPastTimeline: "過去のタイムラインを表示しています"
@@ -1211,6 +1216,7 @@ showRepliesToOthersInTimeline: "TLに他の人への返信を含める"
 hideRepliesToOthersInTimeline: "TLに他の人への返信を含めない"
 showRepliesToOthersInTimelineAll: "TLに現在フォロー中の人全員の返信を含めるようにする"
 hideRepliesToOthersInTimelineAll: "TLに現在フォロー中の人全員の返信を含めないようにする"
+showLocalOnlyInTimeline: "TLに連合なし投稿を含める"
 confirmShowRepliesAll: "この操作は元に戻せません。本当にTLに現在フォロー中の人全員の返信を含めるようにしますか？"
 confirmHideRepliesAll: "この操作は元に戻せません。本当にTLに現在フォロー中の人全員の返信を含めないようにしますか？"
 externalServices: "外部サービス"
@@ -1264,6 +1270,7 @@ backToTitle: "タイトルへ"
 hemisphere: "お住まいの地域"
 withSensitive: "センシティブなファイルを含むノートを表示"
 userSaysSomethingSensitive: "{name}のセンシティブなファイルを含む投稿"
+userSaysSomethingInSensitiveChannel: "{name}のセンシティブチャンネルでの投稿"
 enableHorizontalSwipe: "スワイプしてタブを切り替える"
 loading: "読み込み中"
 surrender: "やめる"
@@ -1347,6 +1354,7 @@ readonly: "読み取り専用"
 goToDeck: "デッキへ戻る"
 federationJobs: "連合ジョブ"
 driveAboutTip: "ドライブでは、過去にアップロードしたファイルの一覧が表示されます。<br>\nノートに添付する際に再利用したり、あとで投稿するファイルを予めアップロードしておくこともできます。<br>\n<b>ファイルを削除すると、今までそのファイルを使用した全ての場所(ノート、ページ、アバター、バナー等)からも見えなくなるので注意してください。</b><br>\nフォルダを作って整理することもできます。"
+scrollToClose: "スクロールして閉じる"
 
 _chat:
   noMessagesYet: "まだメッセージはありません"
@@ -1477,6 +1485,7 @@ _delivery:
     manuallySuspended: "手動停止中"
     goneSuspended: "サーバー削除のため停止中"
     autoSuspendedForNotResponding: "サーバー応答なしのため停止中"
+    softwareSuspended: "配信停止中のソフトウェアであるため停止中"
 
 _bubbleGame:
   howToPlay: "遊び方"
@@ -1593,6 +1602,8 @@ _timelineDescription:
   local: "ローカルタイムラインでは、このサーバーにいるユーザー全員の投稿を見られます。"
   social: "ソーシャルタイムラインには、ホームタイムラインとローカルタイムラインの投稿が両方表示されます。"
   global: "グローバルタイムラインでは、接続している他のすべてのサーバーからの投稿を見られます。"
+  vmimi-relay: "ぶいみみリレータイムラインでは、バーチャルケモミミリレーサーバーに参加しているサーバーのユーザー全員の投稿を見られます。"
+  vmimi-relay-social: "ぶいみみソーシャルタイムラインには、ホームタイムラインとぶいみみリレータイムラインの投稿が両方表示されます。"
 
 _serverRules:
   description: "新規登録前に表示する、サーバーの簡潔なルールを設定します。内容は利用規約の要約とすることを推奨します。"
@@ -1615,6 +1626,8 @@ _serverSettings:
   openRegistration: "アカウントの作成をオープンにする"
   openRegistrationWarning: "登録を開放することはリスクが伴います。サーバーを常に監視し、トラブルが発生した際にすぐに対応できる体制がある場合のみオンにすることを推奨します。"
   thisSettingWillAutomaticallyOffWhenModeratorsInactive: "一定期間モデレーターのアクティビティが検出されなかった場合、スパム防止のためこの設定は自動でオフになります。"
+  deliverSuspendedSoftware: "配信停止中のソフトウェア"
+  deliverSuspendedSoftwareDescription: "脆弱性などの理由で、サーバーのソフトウェアの名前及びバージョンの範囲を指定して配信を停止できます。このバージョン情報はサーバーが提供したものであり、信頼性は保証されません。バージョン指定には semver の範囲指定が使用できますが、>= 2024.3.1 と指定すると 2024.3.1-custom.0 のようなカスタムバージョンが含まれないため、>= 2024.3.1-0 のように prerelease の指定を行うことを推奨します。"
 
 _accountMigration:
   moveFrom: "別のアカウントからこのアカウントに移行"
@@ -1926,6 +1939,7 @@ _role:
   _options:
     gtlAvailable: "グローバルタイムラインの閲覧"
     ltlAvailable: "ローカルタイムラインの閲覧"
+    vrtlAvailable: "ぶいみみリレータイムラインの閲覧"
     canPublicNote: "パブリック投稿の許可"
     mentionMax: "ノート内の最大メンション数"
     canInvite: "サーバー招待コードの発行"
@@ -2086,6 +2100,8 @@ _aboutMisskey:
   morePatrons: "他にも多くの方が支援してくれています。ありがとうございます🥰"
   patrons: "支援者"
   projectMembers: "プロジェクトメンバー"
+  forkContributors: "このサーバーで使用しているforkの主要な開発者"
+  allForkContributors: "このサーバーで使用しているforkの全てのコントリビューター"
 
 _displayOfSensitiveMedia:
   respect: "センシティブ設定されたメディアを隠す"
@@ -2542,6 +2558,8 @@ _timelines:
   local: "ローカル"
   social: "ソーシャル"
   global: "グローバル"
+  vmimi-relay: "ぶいみみリレー"
+  vmimi-relay-social: "ぶいみみソーシャル"
 
 _play:
   new: "Playの作成"
@@ -2763,6 +2781,20 @@ _abuseReport:
     notifiedWebhook: "使用するWebhook"
     deleteConfirm: "通知先を削除しますか？"
 
+_imageCompressionMode:
+  title: "画像の圧縮形式"
+  description: "オリジナル画像を保持しない場合に、Web公開用画像の圧縮形式を選択できます。"
+  imageResize: "画像を縮小する"
+  imageResizeDescription: "縮小する場合は設定値以下になるように縮小されます。縮小処理でファイルサイズが大きくなってしまう場合は元の画像が利用されます。"
+  imageCompressionLossy: "画像を常に非可逆圧縮する"
+  imageCompressionLossyDescription: "非可逆圧縮を指定しない場合は、元画像に応じて非可逆圧縮か可逆圧縮かが自動的に選択されます。"
+  _imageResizeSize:
+    title: "画像縮小時の解像度"
+    max2048: "2048x2048"
+    max2560: "2560x2560"
+    max4096: "4096x4096"
+    max8192: "8192x8192"
+
 _moderationLogTypes:
   createRole: "ロールを作成"
   deleteRole: "ロールを削除"
@@ -2814,6 +2846,7 @@ _moderationLogTypes:
   deleteGalleryPost: "ギャラリーの投稿を削除"
   deleteChatRoom: "チャットルームを削除"
   updateProxyAccountDescription: "プロキシアカウントの説明を更新"
+  makeNoteHome: "ノートをホーム投稿に変更"
 
 _fileViewer:
   title: "ファイルの詳細"
@@ -3090,12 +3123,3 @@ _bootErrors:
   otherOption1: "クライアント設定とキャッシュを削除"
   otherOption2: "簡易クライアントを起動"
   otherOption3: "修復ツールを起動"
-
-_search:
-  searchScopeAll: "全て"
-  searchScopeLocal: "ローカル"
-  searchScopeServer: "サーバー指定"
-  searchScopeUser: "ユーザー指定"
-  pleaseEnterServerHost: "サーバーのホストを入力してください"
-  pleaseSelectUser: "ユーザーを選択してください"
-  serverHostPlaceholder: "例: misskey.example.com"

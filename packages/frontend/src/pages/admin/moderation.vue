@@ -117,6 +117,19 @@ SPDX-License-Identifier: AGPL-3.0-only
 						<MkButton primary @click="save_blockedHosts">{{ i18n.ts.save }}</MkButton>
 					</div>
 				</MkFolder>
+
+				<MkFolder>
+					<template #label>未知のリモートユーザーによる通知</template>
+					<MkSwitch v-model="nirilaBlockMentionsFromUnfamiliarRemoteUsers">
+						<template #label>未知のリモートユーザーによる通知が発生するノートをブロックする</template>
+					</MkSwitch>
+
+					<MkTextarea v-model="nirilaAllowedUnfamiliarRemoteUserIds">
+						<template #label>未知のリモートユーザーによる通知を許可するローカルユーザーのID</template>
+						<template #caption>`@admin`のようなユーザ名ではなく、`9grmcrkrsl`のようなユーザーのIDであることに注意してください。</template>
+					</MkTextarea>
+					<MkButton primary @click="save_nirilaMensionBlocks">{{ i18n.ts.save }}</MkButton>
+				</MkFolder>
 			</div>
 		</FormSuspense>
 	</div>
@@ -148,6 +161,8 @@ const preservedUsernames = ref<string>('');
 const blockedHosts = ref<string>('');
 const silencedHosts = ref<string>('');
 const mediaSilencedHosts = ref<string>('');
+const nirilaBlockMentionsFromUnfamiliarRemoteUsers = ref<boolean>(false);
+const nirilaAllowedUnfamiliarRemoteUserIds = ref<string>('');
 
 async function init() {
 	const meta = await misskeyApi('admin/meta');
@@ -161,6 +176,8 @@ async function init() {
 	blockedHosts.value = meta.blockedHosts.join('\n');
 	silencedHosts.value = meta.silencedHosts?.join('\n') ?? '';
 	mediaSilencedHosts.value = meta.mediaSilencedHosts.join('\n');
+	nirilaBlockMentionsFromUnfamiliarRemoteUsers.value = meta.nirilaBlockMentionsFromUnfamiliarRemoteUsers;
+	nirilaAllowedUnfamiliarRemoteUserIds.value = meta.nirilaAllowedUnfamiliarRemoteUserIds.join('\n');
 }
 
 async function onChange_enableRegistration(value: boolean) {
@@ -248,6 +265,16 @@ function save_silencedHosts() {
 function save_mediaSilencedHosts() {
 	os.apiWithDialog('admin/update-meta', {
 		mediaSilencedHosts: mediaSilencedHosts.value.split('\n') || [],
+	}).then(() => {
+		fetchInstance(true);
+	});
+}
+
+function save_nirilaMensionBlocks() {
+	os.apiWithDialog('admin/update-meta', {
+		nirilaBlockMentionsFromUnfamiliarRemoteUsers: nirilaBlockMentionsFromUnfamiliarRemoteUsers.value,
+		nirilaAllowedUnfamiliarRemoteUserIds: nirilaAllowedUnfamiliarRemoteUserIds.value === ''
+			? [] : nirilaAllowedUnfamiliarRemoteUserIds.value.split('\n'),
 	}).then(() => {
 		fetchInstance(true);
 	});

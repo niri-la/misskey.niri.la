@@ -5,7 +5,7 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import { DI } from '@/di-symbols.js';
-import type { EmojisRepository, NoteReactionsRepository, UsersRepository, NotesRepository, MiMeta } from '@/models/_.js';
+import type { EmojisRepository, NoteReactionsRepository, UsersRepository, NotesRepository, MiMeta, NoteThreadMutingsRepository } from '@/models/_.js';
 import { IdentifiableError } from '@/misc/identifiable-error.js';
 import type { MiRemoteUser, MiUser } from '@/models/User.js';
 import type { MiNote } from '@/models/Note.js';
@@ -81,6 +81,9 @@ export class ReactionService {
 
 		@Inject(DI.noteReactionsRepository)
 		private noteReactionsRepository: NoteReactionsRepository,
+
+		@Inject(DI.noteThreadMutingsRepository)
+		private noteThreadMutingsRepository: NoteThreadMutingsRepository,
 
 		@Inject(DI.emojisRepository)
 		private emojisRepository: EmojisRepository,
@@ -209,9 +212,9 @@ export class ReactionService {
 				.execute();
 		}
 
-		// 30%の確率、セルフではない、3日以内に投稿されたノートの場合ハイライト用ランキング更新
+		// ~~30%の確率~~、セルフではない、3日以内に投稿されたノートの場合ハイライト用ランキング更新
 		if (
-			Math.random() < 0.3 &&
+			//Math.random() < 0.3 &&
 			note.userId !== user.id &&
 			(Date.now() - this.idService.parse(note.id).date.getTime()) < 1000 * 60 * 60 * 24 * 3
 		) {
@@ -220,7 +223,7 @@ export class ReactionService {
 					this.featuredService.updateInChannelNotesRanking(note.channelId, note.id, 1);
 				}
 			} else {
-				if (note.visibility === 'public' && note.userHost == null && note.replyId == null) {
+				if (this.featuredService.shouldBeIncludedInGlobalOrUserFeatured(note)) {
 					this.featuredService.updateGlobalNotesRanking(note.id, 1);
 					this.featuredService.updatePerUserNotesRanking(note.userId, note.id, 1);
 				}
@@ -256,10 +259,19 @@ export class ReactionService {
 
 		// リアクションされたユーザーがローカルユーザーなら通知を作成
 		if (note.userHost === null) {
-			this.notificationService.createNotification(note.userId, 'reaction', {
-				noteId: note.id,
-				reaction: reaction,
-			}, user.id);
+			const isThreadMuted = await this.noteThreadMutingsRepository.exists({
+				where: {
+					userId: note.userId,
+					threadId: note.threadId ?? note.id,
+				},
+			});
+
+			if (!isThreadMuted) {
+				this.notificationService.createNotification(note.userId, 'reaction', {
+					noteId: note.id,
+					reaction: reaction,
+				}, user.id);
+			}
 		}
 
 		//#region 配信

@@ -19,6 +19,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 					</option>
 				</MkSelect>
 
+				<MkSwitch v-model="keepOriginalUploading">
+					<template #label>{{ i18n.ts.keepOriginalUploading }}</template>
+					<template #caption>{{ i18n.ts.keepOriginalUploadingDescription }}</template>
+				</MkSwitch>
+
 				<MkSwitch v-model="directoryToCategory">
 					<template #label>{{ i18n.ts._customEmojisManager._local._register.directoryToCategoryLabel }}</template>
 					<template #caption>{{ i18n.ts._customEmojisManager._local._register.directoryToCategoryCaption }}</template>
@@ -242,6 +247,7 @@ function setupGrid(): GridSetting {
 const uploadFolders = ref<FolderItem[]>([]);
 const gridItems = ref<GridItem[]>([]);
 const selectedFolderId = ref(prefer.s.uploadFolder);
+const keepOriginalUploading = ref(prefer.s.keepOriginalUploading);
 const directoryToCategory = ref<boolean>(false);
 const registerButtonDisabled = ref<boolean>(false);
 const requestLogs = ref<RequestLogItem[]>([]);
@@ -334,7 +340,7 @@ async function onDrop(ev: DragEvent) {
 							it.file,
 							selectedFolderId.value,
 							it.file.name.replace(/\.[^.]+$/, ''),
-							true,
+							keepOriginalUploading.value,
 						),
 					}),
 					),
@@ -369,7 +375,7 @@ async function onFileSelectClicked() {
 		true,
 		{
 			uploadFolder: selectedFolderId.value,
-			keepOriginal: true,
+			keepOriginal: keepOriginalUploading.value,
 			// 拡張子は消す
 			nameConverter: (file) => file.name.replace(/\.[a-zA-Z0-9]+$/, ''),
 		},

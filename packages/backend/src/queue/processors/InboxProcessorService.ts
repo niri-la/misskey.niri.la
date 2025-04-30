@@ -226,6 +226,7 @@ export class InboxProcessorService implements OnApplicationShutdown {
 			}
 		} catch (e) {
 			if (e instanceof IdentifiableError) {
+				if (e.id === 'e11b3a16-f543-4885-8eb1-66cad131dbfd') return 'blocked mentions from unfamiliar user';
 				if (e.id === '689ee33f-f97c-479a-ac49-1b9f8140af99') {
 					return 'blocked notes with prohibited words';
 				}

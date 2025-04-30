@@ -1368,6 +1368,32 @@ describe('Timelines', () => {
 			assert.strictEqual(res.body.some(note => note.id === bobNote.id), true);
 		});
 
+		test.concurrent('[withChannelNotes: true, includeSensitiveChannel: true] 他人が取得した場合もセンシティブチャンネル投稿が含まれる', async () => {
+			const [alice, bob] = await Promise.all([signup(), signup()]);
+
+			const channel = await api('channels/create', { name: 'channel', isSensitive: true }, bob).then(x => x.body);
+			const bobNote = await post(bob, { text: 'hi', channelId: channel.id });
+
+			await waitForPushToTl();
+
+			const res = await api('users/notes', { userId: bob.id, withChannelNotes: true, includeSensitiveChannel: true }, alice);
+
+			assert.strictEqual(res.body.some((note: any) => note.id === bobNote.id), true);
+		});
+
+		test.concurrent('[withChannelNotes: true, includeSensitiveChannel: false] 自分が取得した場合もセンシティブチャンネル投稿が含まれない', async () => {
+			const [bob] = await Promise.all([signup()]);
+
+			const channel = await api('channels/create', { name: 'channel', isSensitive: true }, bob).then(x => x.body);
+			const bobNote = await post(bob, { text: 'hi', channelId: channel.id });
+
+			await waitForPushToTl();
+
+			const res = await api('users/notes', { userId: bob.id, withChannelNotes: true, includeSensitiveChannel: false }, bob);
+
+			assert.strictEqual(res.body.some((note: any) => note.id === bobNote.id), false);
+		});
+
 		test.concurrent('ミュートしているユーザーに関連する投稿が含まれない', async () => {
 			const [alice, bob, carol] = await Promise.all([signup(), signup(), signup()]);
 
@@ -1423,6 +1449,33 @@ describe('Timelines', () => {
 			const res = await api('users/notes', { userId: bob.id, withReplies: true }, alice);
 
 			assert.strictEqual(res.body.some(note => note.id === bobNote.id), false);
+		});
+
+		/** @see https://github.com/misskey-dev/misskey/issues/14000 */
+		test.concurrent('FTT: sinceId にキャッシュより古いノートを指定しても、sinceId による絞り込みが正しく動作する', async () => {
+			const alice = await signup();
+			const noteSince = await post(alice, { text: 'Note where id will be `sinceId`.' });
+			const note1 = await post(alice, { text: '1' });
+			const note2 = await post(alice, { text: '2' });
+			await redisForTimelines.del('list:userTimeline:' + alice.id);
+			const note3 = await post(alice, { text: '3' });
+
+			const res = await api('users/notes', { userId: alice.id, sinceId: noteSince.id });
+			assert.deepStrictEqual(res.body, [note1, note2, note3]);
+		});
+
+		test.concurrent('FTT: sinceId にキャッシュより古いノートを指定しても、sinceId と untilId による絞り込みが正しく動作する', async () => {
+			const alice = await signup();
+			const noteSince = await post(alice, { text: 'Note where id will be `sinceId`.' });
+			const note1 = await post(alice, { text: '1' });
+			const note2 = await post(alice, { text: '2' });
+			await redisForTimelines.del('list:userTimeline:' + alice.id);
+			const note3 = await post(alice, { text: '3' });
+			const noteUntil = await post(alice, { text: 'Note where id will be `untilId`.' });
+			await post(alice, { text: '4' });
+
+			const res = await api('users/notes', { userId: alice.id, sinceId: noteSince.id, untilId: noteUntil.id });
+			assert.deepStrictEqual(res.body, [note3, note2, note1]);
 		});
 
 		/** @see https://github.com/misskey-dev/misskey/issues/14000 */

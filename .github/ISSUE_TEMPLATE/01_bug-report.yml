@@ -1,41 +1,41 @@
-name: 🐛 Bug Report
-description: Create a report to help us improve
-labels: ["⚠️bug?"]
+name: ⚠️ バグ報告
+description: 修正/改善のための報告
+labels: ["⚠️Bug"]
 
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for reporting!
-        First, in order to avoid duplicate Issues, please search to see if the problem you found has already been reported.
-        Also, If you are NOT owner/admin of server, PLEASE DONT REPORT SERVER SPECIFIC ISSUES TO HERE! (e.g. feature XXX is not working in misskey.example) Please try with another misskey servers, and if your issue is only reproducible with specific server, contact your server's owner/admin first.
+        バグ報告を検討していただきありがとうございます!
+        重複を避けるために、同様の問題が既に報告されていないか[にりらみすきー部のIssue](https://github.com/niri-la/misskey.niri.la/issues)を確認してみてください。
+        また、にりらみすきー部で再現したバグのみを報告してください。
 
   - type: textarea
     attributes:
-      label: 💡 Summary
-      description: Tell us what the bug is
+      label: 💡 概要
+      description: どんなバグですか?
     validations:
       required: true
 
   - type: textarea
     attributes:
-      label: 🥰 Expected Behavior
-      description: Tell us what should happen
+      label: 🥰 想定される挙動
+      description: 本来どうあるべきですか?
     validations:
       required: true
 
   - type: textarea
     attributes:
-      label: 🤬 Actual Behavior
+      label: 🤬 実際の挙動
       description: |
-        Tell us what happens instead of the expected behavior.
-        Please include errors from the developer console and/or server log files if you have access to them.
+        実際には何が起きていますか?
+        可能であれば、デベロッパーツールでのエラーメッセージなども載せてください。
     validations:
       required: true
 
   - type: textarea
     attributes:
-      label: 📝 Steps to Reproduce
+      label: 📝 再現手順
       placeholder: |
         1.
         2.
@@ -45,53 +45,17 @@ body:
 
   - type: textarea
     attributes:
-      label: 💻 Frontend Environment
+      label: 💻 お使いの環境
       description: |
-        Tell us where on the platform it happens
-        DO NOT WRITE "latest". Please provide the specific version.
+        どんな環境で問題が起きましたか?
+        "最新"のような書き方はせず、具体的なバージョンを教えてください。
 
-        Examples:
-          * Model and OS of the device(s): MacBook Pro (14inch, 2021), macOS Ventura 13.4
-          * Browser: Chrome 113.0.5672.126
-          * Server URL: misskey.example.com
-          * Misskey: 2025.x.x
+        例:
+          * 機種とOS: MacBook Pro (14inch, 2021), macOS Ventura 13.4
+          * ブラウザ: Chrome 113.0.5672.126
       value: |
-        * Model and OS of the device(s):
-        * Browser:
-        * Server URL:
-        * Misskey:
+        * 機種とOS:
+        * ブラウザ:
       render: markdown
     validations:
       required: false
-
-  - type: textarea
-    attributes:
-      label: 🛰 Backend Environment (for server admin)
-      description: |
-        Tell us where on the platform it happens
-        DO NOT WRITE "latest". Please provide the specific version.
-        If you are using a managed service, put that after the version.
-
-        Examples:
-          * Installation Method or Hosting Service: docker compose, k8s/docker, systemd, "Misskey install shell script", development environment
-          * Misskey: 2025.x.x
-          * Node: 20.x.x
-          * PostgreSQL: 15.x.x
-          * Redis: 7.x.x
-          * OS and Architecture: Ubuntu 24.04.2 LTS aarch64
-      value: |
-        * Installation Method or Hosting Service:
-        * Misskey:
-        * Node:
-        * PostgreSQL:
-        * Redis:
-        * OS and Architecture:
-      render: markdown
-    validations:
-      required: false
-
-  - type: checkboxes
-    attributes:
-      label: Do you want to address this bug yourself?
-      options:
-        - label: Yes, I will patch the bug myself and send a pull request

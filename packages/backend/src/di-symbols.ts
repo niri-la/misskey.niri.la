@@ -15,6 +15,7 @@ export const DI = {
 	redisForReactions: Symbol('redisForReactions'),
 
 	//#region Repositories
+	nirilaDeleteUserLogRepository: Symbol('nirilaDeleteUserLogRepository'),
 	usersRepository: Symbol('usersRepository'),
 	notesRepository: Symbol('notesRepository'),
 	announcementsRepository: Symbol('announcementsRepository'),

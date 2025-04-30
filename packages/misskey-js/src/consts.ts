@@ -28,6 +28,7 @@ export const followingVisibilities = ['public', 'followers', 'private'] as const
 export const followersVisibilities = ['public', 'followers', 'private'] as const;
 
 export const permissions = [
+	'read:admin:nirila-delete-user-log-access',
 	'read:account',
 	'write:account',
 	'read:blocks',
@@ -167,6 +168,7 @@ export const moderationLogTypes = [
 	'deleteFlash',
 	'deleteGalleryPost',
 	'deleteChatRoom',
+	'makeNoteHome',
 ] as const;
 
 // See: packages/backend/src/core/ReversiService.ts@L410
@@ -442,5 +444,12 @@ export type ModerationLogPayloads = {
 	deleteChatRoom: {
 		roomId: string;
 		room: ChatRoom;
+	};
+	makeNoteHome: {
+		noteId: string;
+		noteUserId: string;
+		noteUserUsername: string;
+		noteUserHost: string | null;
+		note: any;
 	};
 };

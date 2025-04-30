@@ -411,11 +411,13 @@ export class UserEntityService implements OnModuleInit {
 			userRelations?: Map<MiUser['id'], UserRelation>,
 			userMemos?: Map<MiUser['id'], string | null>,
 			pinNotes?: Map<MiUser['id'], MiUserNotePining[]>,
+			asModerator?: boolean,
 		},
 	): Promise<Packed<S>> {
 		const opts = Object.assign({
 			schema: 'UserLite',
 			includeSecrets: false,
+			asModerator: undefined as boolean | undefined,
 		}, options);
 
 		const user = typeof src === 'object' ? src : await this.usersRepository.findOneByOrFail({ id: src });
@@ -423,7 +425,7 @@ export class UserEntityService implements OnModuleInit {
 		const isDetailed = opts.schema !== 'UserLite';
 		const meId = me ? me.id : null;
 		const isMe = meId === user.id;
-		const iAmModerator = me ? await this.roleService.isModerator(me as MiUser) : false;
+		const iAmModerator = opts.asModerator ?? (me ? await this.roleService.isModerator(me as MiUser) : false);
 
 		const profile = isDetailed
 			? (opts.userProfile ?? await this.userProfilesRepository.findOneByOrFail({ userId: user.id }))

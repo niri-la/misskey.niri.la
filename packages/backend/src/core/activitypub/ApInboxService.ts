@@ -557,12 +557,14 @@ export class ApInboxService {
 		});
 		if (users.length < 1) return 'skip';
 
+		const comment = `${activity.content}\n${JSON.stringify(uris, null, 2)}`;
+
 		await this.abuseReportService.report([{
 			targetUserId: users[0].id,
 			targetUserHost: users[0].host,
 			reporterId: actor.id,
 			reporterHost: actor.host,
-			comment: `${activity.content}\n${JSON.stringify(uris, null, 2)}`,
+			comment,
 		}]);
 
 		return 'ok';

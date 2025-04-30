@@ -30,11 +30,37 @@ const mimeTypeMap = {
 	'image/png': 'png',
 } as const;
 
+// tar.gzなど、拡張子内にドットを2つまで許容するものはここに追加
+const specialExtensions = [
+	'gz',
+	'bz2',
+	'xz',
+	'zst',
+	'lz',
+	'lz4',
+	'sz',
+	'z',
+	'zstd',
+] as const;
+
+function getExtension(filename: string): string {
+	const parts = filename.split('.');
+
+	if (parts.length <= 1) return '';
+
+	for (const ext of specialExtensions) {
+		if (parts[parts.length - 1] === ext && parts.length > 2) {
+			return '.' + parts[parts.length - 2] + '.' + parts[parts.length - 1];
+		}
+	}
+	return '.' + parts.pop();
+}
+
 export function uploadFile(
 	file: File,
 	folder?: string | Misskey.entities.DriveFolder | null,
 	name?: string,
-	keepOriginal = false,
+	keepOriginal: boolean = prefer.s.keepOriginalUploading,
 ): Promise<Misskey.entities.DriveFile> {
 	if ($i == null) throw new Error('Not logged in');
 
@@ -55,7 +81,7 @@ export function uploadFile(
 		const reader = new FileReader();
 		reader.onload = async (): Promise<void> => {
 			const filename = name ?? file.name ?? 'untitled';
-			const extension = filename.split('.').length > 1 ? '.' + filename.split('.').pop() : '';
+			const extension = getExtension(filename);
 
 			const ctx = reactive<Uploading>({
 				id,

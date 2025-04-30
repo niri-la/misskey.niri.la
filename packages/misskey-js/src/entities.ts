@@ -198,6 +198,9 @@ export type ModerationLog = {
 } | {
 	type: 'deleteChatRoom';
 	info: ModerationLogPayloads['deleteChatRoom'];
+} | {
+	type: 'makeNoteHome';
+	info: ModerationLogPayloads['makeNoteHome'];
 });
 
 export type ServerStats = {

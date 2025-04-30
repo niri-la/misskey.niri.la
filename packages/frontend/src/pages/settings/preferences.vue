@@ -42,6 +42,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 						</SearchMarker>
 
 						<div class="_gaps_s">
+							<SearchMarker :keywords="['titlebar', 'show']">
+								<MkPreferenceContainer k="showTitlebar">
+									<MkSwitch v-model="showTitlebar">
+										<template #label><SearchLabel>{{ i18n.ts.showTitlebar }}</SearchLabel></template>
+									</MkSwitch>
+								</MkPreferenceContainer>
+							</SearchMarker>
+
 							<SearchMarker :keywords="['avatar', 'icon', 'decoration', 'show']">
 								<MkPreferenceContainer k="showAvatarDecorations">
 									<MkSwitch v-model="showAvatarDecorations">
@@ -206,6 +214,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 									<MkPreferenceContainer k="loadRawImages">
 										<MkSwitch v-model="loadRawImages">
 											<template #label><SearchLabel>{{ i18n.ts.loadRawImages }}</SearchLabel></template>
+										</MkSwitch>
+									</MkPreferenceContainer>
+								</SearchMarker>
+
+								<SearchMarker :keywords="['collapse', 'sensitive', 'channel', 'fold']">
+									<MkPreferenceContainer k="collapseSensitiveChannel">
+										<MkSwitch v-model="collapseSensitiveChannel">
+											<template #label><SearchLabel>{{ i18n.ts.collapseSensitiveChannel }}</SearchLabel></template>
 										</MkSwitch>
 									</MkPreferenceContainer>
 								</SearchMarker>
@@ -742,6 +758,7 @@ const lang = ref(miLocalStorage.getItem('lang'));
 const dataSaver = ref(prefer.s.dataSaver);
 
 const overridedDeviceKind = prefer.model('overridedDeviceKind');
+const showTitlebar = prefer.model('showTitlebar');
 const keepCw = prefer.model('keepCw');
 const serverDisconnectedBehavior = prefer.model('serverDisconnectedBehavior');
 const hemisphere = prefer.model('hemisphere');
@@ -753,6 +770,7 @@ const showReactionsCount = prefer.model('showReactionsCount');
 const enableQuickAddMfmFunction = prefer.model('enableQuickAddMfmFunction');
 const forceShowAds = prefer.model('forceShowAds');
 const loadRawImages = prefer.model('loadRawImages');
+const collapseSensitiveChannel = prefer.model('collapseSensitiveChannel');
 const imageNewTab = prefer.model('imageNewTab');
 const showFixedPostForm = prefer.model('showFixedPostForm');
 const showFixedPostFormInChannel = prefer.model('showFixedPostFormInChannel');

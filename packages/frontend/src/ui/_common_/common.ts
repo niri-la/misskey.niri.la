@@ -130,9 +130,17 @@ export function openInstanceMenu(ev: MouseEvent) {
 		});
 	}
 
-	if (instance.impressumUrl != null || instance.tosUrl != null || instance.privacyPolicyUrl != null) {
+	menuItems.push({
+		type: 'a',
+		text: 'NSFWガイドライン',
+		icon: 'ti ti-notebook',
+		href: 'https://kinel.notion.site/NSFW-2024-5-1-f926e4bcff3f41c499ccd6ff13b2c4f2',
+		target: '_blank',
+	});
+
+	//if (instance.impressumUrl != null || instance.tosUrl != null || instance.privacyPolicyUrl != null) {
 		menuItems.push({ type: 'divider' });
-	}
+	//}
 
 	menuItems.push({
 		type: 'a',

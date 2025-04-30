@@ -45,6 +45,7 @@ import { ApDeliverManagerService } from '@/core/activitypub/ApDeliverManagerServ
 import { RemoteUserResolveService } from '@/core/RemoteUserResolveService.js';
 import { bindThis } from '@/decorators.js';
 import { DB_MAX_NOTE_TEXT_LENGTH } from '@/const.js';
+import { VmimiRelayTimelineService } from '@/core/VmimiRelayTimelineService.js';
 import { RoleService } from '@/core/RoleService.js';
 import { SearchService } from '@/core/SearchService.js';
 import { FeaturedService } from '@/core/FeaturedService.js';
@@ -56,6 +57,9 @@ import { trackPromise } from '@/misc/promise-tracker.js';
 import { IdentifiableError } from '@/misc/identifiable-error.js';
 import { CollapsedQueue } from '@/misc/collapsed-queue.js';
 import { CacheService } from '@/core/CacheService.js';
+import { LoggerService } from '@/core/LoggerService.js';
+import type Logger from '@/logger.js';
+import { SpamFilterService } from '@/core/SpamFilterService.js';
 
 type NotificationType = 'reply' | 'renote' | 'quote' | 'mention';
 
@@ -146,6 +150,7 @@ type Option = {
 
 @Injectable()
 export class NoteCreateService implements OnApplicationShutdown {
+	private logger: Logger;
 	#shutdownController = new AbortController();
 	private updateNotesCountQueue: CollapsedQueue<MiNote['id'], number>;
 
@@ -192,6 +197,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 		@Inject(DI.channelFollowingsRepository)
 		private channelFollowingsRepository: ChannelFollowingsRepository,
 
+		private vmimiRelayTimelineService: VmimiRelayTimelineService,
 		private userEntityService: UserEntityService,
 		private noteEntityService: NoteEntityService,
 		private idService: IdService,
@@ -217,8 +223,11 @@ export class NoteCreateService implements OnApplicationShutdown {
 		private utilityService: UtilityService,
 		private userBlockingService: UserBlockingService,
 		private cacheService: CacheService,
+		private loggerService: LoggerService,
+		private spamFilterService: SpamFilterService,
 	) {
 		this.updateNotesCountQueue = new CollapsedQueue(process.env.NODE_ENV !== 'test' ? 60 * 1000 * 5 : 0, this.collapseNotesCount, this.performUpdateNotesCount);
+		this.logger = this.loggerService.getLogger('note:create');
 	}
 
 	@bindThis
@@ -365,6 +374,18 @@ export class NoteCreateService implements OnApplicationShutdown {
 
 		// if the host is media-silenced, custom emojis are not allowed
 		if (this.utilityService.isMediaSilencedHost(this.meta.mediaSilencedHosts, user.host)) emojis = [];
+
+		if (await this.spamFilterService.isSpam({
+			mentionedUsers,
+			visibility: data.visibility,
+			visibleUsers: data.visibleUsers ?? [],
+			reply: data.reply ?? null,
+			quote: this.isRenote(data) && this.isQuote(data) ? data.renote : null,
+			user: user,
+		})) {
+			this.logger.error('Request rejected because user has no local followers', { user: user.id, note: data });
+			throw new IdentifiableError('e11b3a16-f543-4885-8eb1-66cad131dbfd', 'Notes including mentions, replies, or renotes from remote users are not allowed until user has at least one local follower.');
+		}
 
 		tags = tags.filter(tag => Array.from(tag).length <= 128).splice(0, 32);
 
@@ -598,12 +619,14 @@ export class NoteCreateService implements OnApplicationShutdown {
 			this.roleService.addNoteToRoleTimeline(noteObj);
 
 			this.webhookService.enqueueUserWebhook(user.id, 'note', { note: noteObj });
+			this.webhookService.enqueueAdminWebhook(`note@${user.username}`, { note: noteObj });
 
 			const nm = new NotificationManager(this.mutingsRepository, this.notificationService, user, note);
 
 			await this.createMentionedEvents(mentionedUsers, note, nm);
 
 			// If has in reply to note
+			let isOnThreadMutedTree = false;
 			if (data.reply) {
 				// 通知
 				if (data.reply.userHost === null) {
@@ -613,6 +636,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 							threadId: data.reply.threadId ?? data.reply.id,
 						},
 					});
+					isOnThreadMutedTree = isThreadMuted;
 
 					if (!isThreadMuted) {
 						nm.push(data.reply.userId, 'reply');
@@ -628,13 +652,23 @@ export class NoteCreateService implements OnApplicationShutdown {
 
 				// Notify
 				if (data.renote.userHost === null) {
-					nm.push(data.renote.userId, type);
-				}
+					const isThreadMuted = await this.noteThreadMutingsRepository.exists({
+						where: {
+							userId: data.renote.userId,
+							threadId: data.renote.threadId ?? data.renote.id,
+						},
+					});
 
-				// Publish event
-				if ((user.id !== data.renote.userId) && data.renote.userHost === null) {
-					this.globalEventService.publishMainStream(data.renote.userId, 'renote', noteObj);
-					this.webhookService.enqueueUserWebhook(data.renote.userId, 'renote', { note: noteObj });
+					// If the quoted note is not thread muted but the quoting note is on thread muted tree, need to mute it.
+					if (!isThreadMuted && !isOnThreadMutedTree) {
+						nm.push(data.renote.userId, type);
+
+						// Publish event
+						if (user.id !== data.renote.userId) {
+							this.globalEventService.publishMainStream(data.renote.userId, 'renote', noteObj);
+							this.webhookService.enqueueUserWebhook(data.renote.userId, 'renote', { note: noteObj });
+						}
+					}
 				}
 			}
 
@@ -726,14 +760,14 @@ export class NoteCreateService implements OnApplicationShutdown {
 			.where('id = :id', { id: renote.id })
 			.execute();
 
-		// 30%の確率、3日以内に投稿されたノートの場合ハイライト用ランキング更新
-		if (Math.random() < 0.3 && (Date.now() - this.idService.parse(renote.id).date.getTime()) < 1000 * 60 * 60 * 24 * 3) {
+		// ~~30%の確率、~~3日以内に投稿されたノートの場合ハイライト用ランキング更新
+		if ((Date.now() - this.idService.parse(renote.id).date.getTime()) < 1000 * 60 * 60 * 24 * 3) {
 			if (renote.channelId != null) {
 				if (renote.replyId == null) {
 					this.featuredService.updateInChannelNotesRanking(renote.channelId, renote.id, 5);
 				}
 			} else {
-				if (renote.visibility === 'public' && renote.userHost == null && renote.replyId == null) {
+				if (this.featuredService.shouldBeIncludedInGlobalOrUserFeatured(renote)) {
 					this.featuredService.updateGlobalNotesRanking(renote.id, 5);
 					this.featuredService.updatePerUserNotesRanking(renote.userId, renote.id, 5);
 				}
@@ -922,6 +956,12 @@ export class NoteCreateService implements OnApplicationShutdown {
 						this.fanoutTimelineService.push(`localTimelineWithReplyTo:${note.replyUserId}`, note.id, 300 / 10, r);
 					}
 				}
+				if (note.visibility === 'public' && this.vmimiRelayTimelineService.isRelayedInstance(note.userHost) && !note.localOnly) {
+					this.fanoutTimelineService.push('vmimiRelayTimelineWithReplies', note.id, this.meta.vmimiRelayTimelineCacheMax, r);
+					if (note.replyUserHost == null) {
+						this.fanoutTimelineService.push(`vmimiRelayTimelineWithReplyTo:${note.replyUserId}`, note.id, this.meta.vmimiRelayTimelineCacheMax / 10, r);
+					}
+				}
 			} else {
 				this.fanoutTimelineService.push(`userTimeline:${user.id}`, note.id, note.userHost == null ? this.meta.perLocalUserUserTimelineCacheMax : this.meta.perRemoteUserUserTimelineCacheMax, r);
 				if (note.fileIds.length > 0) {
@@ -932,6 +972,12 @@ export class NoteCreateService implements OnApplicationShutdown {
 					this.fanoutTimelineService.push('localTimeline', note.id, 1000, r);
 					if (note.fileIds.length > 0) {
 						this.fanoutTimelineService.push('localTimelineWithFiles', note.id, 500, r);
+					}
+				}
+				if (note.visibility === 'public' && this.vmimiRelayTimelineService.isRelayedInstance(note.userHost) && !note.localOnly) {
+					this.fanoutTimelineService.push('vmimiRelayTimeline', note.id, this.meta.vmimiRelayTimelineCacheMax, r);
+					if (note.fileIds.length > 0) {
+						this.fanoutTimelineService.push('vmimiRelayTimelineWithFiles', note.id, this.meta.vmimiRelayTimelineCacheMax / 2, r);
 					}
 				}
 			}
