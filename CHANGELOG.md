@@ -2,7 +2,7 @@
 
 ### Client
 - Enhance: ノートのサーバー情報のデザインを改善・パフォーマンス向上  
-  (Cherry-picked from https://github.com/taiyme/misskey/pull/198, https://github.com/taiyme/misskey/pull/211, https://github.com/taiyme/misskey/pull/283)
+  (Based on https://github.com/taiyme/misskey/pull/198, https://github.com/taiyme/misskey/pull/211, https://github.com/taiyme/misskey/pull/283)
 
 ## 2025.5.0
 
