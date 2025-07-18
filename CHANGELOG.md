@@ -1,3 +1,8 @@
+## Unreleased
+
+### Client
+- Fix: C++ のシンタックスハイライトが Safari でフリーズする問題を修正
+
 ## 2025.7.0
 
 ### Note
