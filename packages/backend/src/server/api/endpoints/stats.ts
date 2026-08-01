@@ -101,9 +101,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				originalNotesCount,
 				usersCount,
 				originalUsersCount,
-				//reactionsCount,
 				//originalReactionsCount,
 				instances,
+				reactionsCount: 0,
 				driveUsageLocal: 0,
 				driveUsageRemote: 0,
 			};
