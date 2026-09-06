@@ -103,7 +103,6 @@ export function migrateOldSettings() {
 		prefer.commit('mediaListWithOneImageAppearance', store.s.mediaListWithOneImageAppearance);
 		prefer.commit('notificationPosition', store.s.notificationPosition);
 		prefer.commit('notificationStackAxis', store.s.notificationStackAxis);
-		prefer.commit('enableCondensedLine', store.s.enableCondensedLine);
 		prefer.commit('keepScreenOn', store.s.keepScreenOn);
 		prefer.commit('useGroupedNotifications', store.s.useGroupedNotifications);
 		prefer.commit('dataSaver', {
