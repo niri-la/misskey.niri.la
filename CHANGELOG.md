@@ -1,4 +1,6 @@
-## 2026.9.1
+## 2026.9.1-kinel.1
+
+## 2026.9.1 (merged to 2026.9.1-kinel.1)
 
 ### General
 - Enhance: 翻訳の更新
