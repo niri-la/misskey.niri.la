@@ -59,6 +59,10 @@ const notesPaginator = markRaw(new Paginator('users/notes', {
 		includeSensitiveChannel: $i != null,
 	})),
 }));
+
+defineExpose({
+	reload: () => (tab.value === 'featured' ? featuredPaginator : notesPaginator).reload(),
+});
 </script>
 
 <style lang="scss" module>
