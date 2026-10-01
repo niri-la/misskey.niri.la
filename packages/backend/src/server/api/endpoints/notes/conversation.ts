@@ -3,11 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
-import type { MiNote } from '@/models/Note.js';
+import { Inject, Injectable } from '@nestjs/common';
 import type { MiDeletedNote } from '@/models/DeletedNote.js';
+import type { MiNote } from '@/models/Note.js';
+import type { MiMeta } from '@/models/_.js';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
+import { DI } from '@/di-symbols.js';
 import { GetterService } from '@/server/api/GetterService.js';
 import { ApiError } from '../../error.js';
 
@@ -48,10 +50,15 @@ export const paramDef = {
 @Injectable()
 export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-disable-line import/no-default-export
 	constructor(
+		@Inject(DI.meta)
+		private serverSettings: MiMeta,
+
 		private noteEntityService: NoteEntityService,
 		private getterService: GetterService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
+			if (me == null && this.serverSettings.ugcVisibilityForVisitor === 'none') return [];
+
 			const note = await this.getterService.getMayDeletedNote(ps.noteId).catch(err => {
 				if (err.id === '9725d0ce-ba28-4dde-95a7-2cbb2c15de24') throw new ApiError(meta.errors.noSuchNote);
 				throw err;
