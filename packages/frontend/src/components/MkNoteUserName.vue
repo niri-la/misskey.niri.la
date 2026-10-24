@@ -17,7 +17,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 <script lang="ts" setup>
 import * as Misskey from 'misskey-js';
-import { userPage } from '@/filters/user.js';
+import { userPage } from '@@/js/user.js';
 
 withDefaults(defineProps<{
 	note: Misskey.entities.Note | null;

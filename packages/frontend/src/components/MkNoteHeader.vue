@@ -38,7 +38,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 import { inject } from 'vue';
 import * as Misskey from 'misskey-js';
 import { i18n } from '@/i18n.js';
-import { notePage } from '@/filters/note.js';
+import { notePage } from '@@/js/note.js';
 import MkNoteUserName from '@/components/MkNoteUserName.vue';
 import { DI } from '@/di.js';
 

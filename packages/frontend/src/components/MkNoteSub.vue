@@ -46,7 +46,7 @@ import MkNoteUserAvatar from '@/components/MkNoteUserAvatar.vue';
 import MkNoteUserName from '@/components/MkNoteUserName.vue';
 import MkSubNoteContent from '@/components/MkSubNoteContent.vue';
 import MkCwButton from '@/components/MkCwButton.vue';
-import { notePage } from '@/filters/note.js';
+import { notePage } from '@@/js/note.js';
 import { misskeyApi } from '@/utility/misskey-api.js';
 import { i18n } from '@/i18n.js';
 import { $i } from '@/i.js';
