@@ -72,6 +72,7 @@ describe('HTML descriptions as plain text', () => {
 			mockDeep(), mockDeep(), mockDeep(), mockDeep(), mockDeep(), mockDeep(),
 			htmlTemplateService,
 			clientLoggerService,
+			mockDeep(),
 		);
 		const server = Fastify();
 		try {

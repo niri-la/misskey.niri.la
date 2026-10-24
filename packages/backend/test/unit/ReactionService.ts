@@ -157,6 +157,7 @@ describe('ReactionService', () => {
 						inserted.push(record);
 					}),
 				} as never,
+				{} as never,
 				{ findOne: vi.fn() } as never,
 				{ toPunyNullable: (host: string | null) => host, isMediaSilencedHost: () => false } as never,
 				{
@@ -176,7 +177,7 @@ describe('ReactionService', () => {
 				{ checkBlocked: vi.fn().mockResolvedValue(false) } as never,
 				{ create: vi.fn(), delete: vi.fn() } as never,
 				{ gen: vi.fn(() => 'reaction-id'), parse: vi.fn(() => ({ date: new Date() })) } as never,
-				{ updateInChannelNotesRanking: vi.fn(), updateGlobalNotesRanking: vi.fn(), updatePerUserNotesRanking: vi.fn() } as never,
+				{ shouldBeIncludedInGlobalOrUserFeatured: () => true, updateInChannelNotesRanking: vi.fn(), updateGlobalNotesRanking: vi.fn(), updatePerUserNotesRanking: vi.fn() } as never,
 				{ publishNoteStream: vi.fn() } as never,
 				{
 					addContext: (content: unknown) => content,
