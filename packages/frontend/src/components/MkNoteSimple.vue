@@ -56,7 +56,6 @@ const showContent = ref(false);
 	&.useSticky {
 		position: sticky !important;
 		top: calc(16px + var(--MI-stickyTop, 0px));
-		left: 0;
 	}
 }
 
